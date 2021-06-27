@@ -13,7 +13,7 @@ let betSchema = new Schema( {
     },
     betType: {
         type: String,
-        required: [ true, 'El número a apostar es requerido' ],
+        required: [ true, 'El tipo de apuesta es requerido' ],
         enum: validBetTypes
     },
     amountToBet: {
@@ -29,7 +29,10 @@ let betSchema = new Schema( {
         ref: 'Roulette',
         required: [ true, 'El id de la ruleta es requerido' ]
     },
-    amountWon: Number,
+    amountWon: {
+        type: Number,
+        default: 0
+    },
     created_at: { 
         type: Date, 
         default: Date.now() 
