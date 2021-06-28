@@ -1,8 +1,8 @@
 const rouletteCtrl = {};
 const Roulette = require( './model' );
-const { 
-    generateWinningNumber
- } = require( './utils/util' );
+const Bet = require( '../bet/model' );
+const { generateWinningNumber } = require( './utils/util' );
+const { getBetsAndUpdateWonsByRoulette } = require( '../bet/utils/util' );
 
 rouletteCtrl.create = async ( req, res ) => {
     let roulette = new Roulette();
@@ -64,27 +64,24 @@ rouletteCtrl.closeRoulette = async ( req, res ) => {
     let { id } = req.params;
     Roulette.findByIdAndUpdate( id, { 
         state: 'CLOSE', 
-        winningNumber: generateWinningNumber,
+        winningNumber: generateWinningNumber(),
         closed_at: Date.now()
-     }, ( err, roulette ) => {
+     }, { new: true }, ( err, roulette ) => {
         if ( err ){
-            return {
+            return res.status( 400 ).json( {
                 ok: false,
                 err
-            };
+            } );
         } else if ( !roulette ){
-            return {
+            return res.status( 400 ).json( {
                 ok: false,
                 err: {
                     message: 'No existe ruleta'
                 }
-            };
+            } );
         }
-
-        return {
-            ok: true,
-            roulette
-        };
+         
+        getBetsAndUpdateWonsByRoulette(roulette).then(resp => { return res.json( resp ) })
     } );
 };
 

@@ -1,27 +1,28 @@
 const rouletteUtil = {};
-const Roulette = require( './model' );
+const Roulette = require( '../model' );
 
-rouletteUtil.getRouletteStateById = async ( idRoulette ) => {
-    Roulette.findById( idRoulette, ( err, roulette ) => {
-        if ( err ){
-            return {
-                ok: false,
-                err
-            };
-        } else if ( !roulette ){
-            return {
-                ok: false,
-                err: {
-                    message: 'No existe ruleta'
-                }
-            };
-        }
+rouletteUtil.getRouletteStateById = ( idRoulette ) => {
+    return new Promise( (resolve, reject) => { Roulette.findById( idRoulette, ( err, roulette ) => {
+            if ( err ){
+                resolve ( {
+                    ok: false,
+                    err
+                } );
+            } else if ( !roulette ){
+                resolve ( {
+                    ok: false,
+                    err: {
+                        message: 'No existe ruleta'
+                    }
+                } );
+            }
 
-        return {
-            ok: true,
-            state: roulette.state
-        };
-    } );
+            resolve ( {
+                ok: true,
+                state: roulette.state
+            } );
+        } );
+    });
 };
 
 rouletteUtil.generateWinningNumber = () => {
